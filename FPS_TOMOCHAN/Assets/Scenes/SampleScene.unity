@@ -295,8 +295,8 @@ MonoBehaviour:
   groundDistance: 0.09
   jumpHeight: 2
   dashCooldown: 0
-  dashDistance: 2.5
-  drag: {x: 5, y: 1, z: 5}
+  dashDistance: 5
+  drag: {x: 15, y: 1, z: 15}
   dragDuration: 2
 --- !u!1 &534669902
 GameObject:
