@@ -37,6 +37,7 @@ public class PlayerBehaviour : MonoBehaviour
         Jump();
         Dash();
         ApplyDrag();
+        Rotate();
     }
 
     private void Movement()
@@ -99,9 +100,11 @@ public class PlayerBehaviour : MonoBehaviour
         yield break;
     }
 
-    void RotateCameraAndCharacter()
+    void Rotate()
     {
-        
+        float rotx = Input.GetAxis("Mouse X");
+        transform.Rotate(0f, rotx, 0f);
+        //fpscam.transform.Rotate(transform.rotation.)
     }
 
 }
