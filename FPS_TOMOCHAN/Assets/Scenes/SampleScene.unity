@@ -291,6 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63a6edda4f326940b422f689e0ee259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fpscam: {fileID: 534669904}
   speed: 5
   groundDistance: 0.09
   jumpHeight: 2
