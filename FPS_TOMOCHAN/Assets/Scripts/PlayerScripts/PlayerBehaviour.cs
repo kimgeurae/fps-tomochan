@@ -9,6 +9,7 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector3 _velocity;
     private Transform _groundChecker;
     private LayerMask groundLayer;
+    public Camera fpscam;
     private bool _canDash;
     private bool _isGrounded;
     public float speed;
@@ -96,6 +97,11 @@ public class PlayerBehaviour : MonoBehaviour
         yield return new WaitForSeconds(dragDuration);
         _canDash = true;
         yield break;
+    }
+
+    void RotateCameraAndCharacter()
+    {
+        
     }
 
 }
