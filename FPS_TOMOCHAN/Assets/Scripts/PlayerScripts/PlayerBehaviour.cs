@@ -9,7 +9,6 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector3 _velocity;
     private Transform _groundChecker;
     private LayerMask groundLayer;
-    public Camera fpscam;
     private bool _canDash;
     private bool _isGrounded;
     public float speed;
@@ -27,6 +26,7 @@ public class PlayerBehaviour : MonoBehaviour
         groundLayer = LayerMask.GetMask("Ground");
         _canDash = true;
         _groundChecker = transform.GetChild(0);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -37,7 +37,6 @@ public class PlayerBehaviour : MonoBehaviour
         Jump();
         Dash();
         ApplyDrag();
-        Rotate();
     }
 
     private void Movement()
@@ -100,11 +99,12 @@ public class PlayerBehaviour : MonoBehaviour
         yield break;
     }
 
-    void Rotate()
+    void UnlockCursor()
     {
-        float rotx = Input.GetAxis("Mouse X");
-        transform.Rotate(0f, rotx, 0f);
-        //fpscam.transform.Rotate(transform.rotation.)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
 }
