@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector3 _velocity;
     private Transform _groundChecker;
     private LayerMask groundLayer;
+    private Camera _fpscam;
     private bool _canDash;
     private bool _isGrounded;
     public float speed;
@@ -19,6 +21,11 @@ public class PlayerBehaviour : MonoBehaviour
     public Vector3 drag;
     public float dragDuration;
 
+    public Image _leftCrosshair;
+    public Image _rightCrosshair;
+    public Image _topCrosshair;
+    public Image _botCrosshair;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +34,7 @@ public class PlayerBehaviour : MonoBehaviour
         _canDash = true;
         _groundChecker = transform.GetChild(0);
         Cursor.lockState = CursorLockMode.Locked;
+        _fpscam = transform.GetChild(1).GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -37,16 +45,22 @@ public class PlayerBehaviour : MonoBehaviour
         Jump();
         Dash();
         ApplyDrag();
+        PlayerShoot();
     }
 
     private void Movement()
     {
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        _controller.Move(move * Time.deltaTime * speed);
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+        Vector3 forwardMovement = transform.forward * verticalInput;
+        Vector3 strafeMovement = transform.right * horizontalInput;
+        _controller.Move((forwardMovement + strafeMovement) * Time.deltaTime * speed);
+        /*
         if (move != Vector3.zero)
         {
             transform.forward = move;
         }
+        */
     }
 
     private void Gravity()
@@ -105,6 +119,33 @@ public class PlayerBehaviour : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
         }
+    }
+
+    void PlayerShoot()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Shoot();
+        }
+    }
+
+    void Shoot()
+    {
+        RaycastHit hit;
+        Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.yellow, 2.5f);
+        if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f))
+        {
+            if (hit.transform.gameObject.CompareTag("Enemies"))
+            {
+                Debug.Log("Acertou inimigo");
+            }
+        }
+        AnimateCrosshair();
+    }
+
+    void AnimateCrosshair()
+    {
+        
     }
 
 }

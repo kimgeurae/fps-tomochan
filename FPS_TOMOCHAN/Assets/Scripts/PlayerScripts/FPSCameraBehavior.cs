@@ -32,7 +32,7 @@ public class FPSCameraBehavior : MonoBehaviour
         smoothV.x = Mathf.Lerp(smoothV.x, md.x, 1f / smoothing);
         smoothV.y = Mathf.Lerp(smoothV.y, md.y, 1f / smoothing);
         mouseLook += smoothV;
-
+        mouseLook.y = Mathf.Clamp(mouseLook.y, -90f, 90f);
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         _player.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, _player.transform.up);
     }
