@@ -11,6 +11,7 @@ public class PlayerBehaviour : MonoBehaviour
     private Transform _groundChecker;
     private LayerMask groundLayer;
     private Camera _fpscam;
+    private GameObject _gun;
     private bool _canDash;
     private bool _isGrounded;
     public float speed;
@@ -35,6 +36,7 @@ public class PlayerBehaviour : MonoBehaviour
         _groundChecker = transform.GetChild(0);
         Cursor.lockState = CursorLockMode.Locked;
         _fpscam = transform.GetChild(1).GetComponent<Camera>();
+        _gun = transform.GetChild(2).gameObject;
     }
 
     // Update is called once per frame
@@ -46,6 +48,7 @@ public class PlayerBehaviour : MonoBehaviour
         Dash();
         ApplyDrag();
         PlayerShoot();
+        PointGunToCenter();
     }
 
     private void Movement()
@@ -141,6 +144,20 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
         AnimateCrosshair();
+    }
+
+    void PointGunToCenter()
+    {
+        RaycastHit target;
+        Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.green, .5f);
+        if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out target, 100f))
+        {
+            _gun.transform.LookAt(target.point);
+        }
+        else
+        {
+            _gun.transform.LookAt(Vector3.Scale(_fpscam.transform.position, new Vector3(0f, 0f, 100f)));
+        }
     }
 
     void AnimateCrosshair()
