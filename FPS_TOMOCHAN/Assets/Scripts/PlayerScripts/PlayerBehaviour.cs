@@ -144,6 +144,7 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
         AnimateCrosshair();
+        _gun.gameObject.GetComponent<BasicWeaponBehaviour>().ShootBullet();
     }
 
     void PointGunToCenter()
