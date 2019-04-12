@@ -96,9 +96,9 @@ MonoBehaviour:
   bulletMaxDmg: 15
   bulletMinCritDmg: 30
   bulletMaxCritDmg: 35
-  bulletSpeed: 10
+  bulletSpeed: 50
   destroyTime: 2
-  critChance: 0.1
+  critChance: 0.15
 --- !u!54 &3249974220644883158
 Rigidbody:
   m_ObjectHideFlags: 0

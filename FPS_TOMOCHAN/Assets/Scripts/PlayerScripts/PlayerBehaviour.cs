@@ -27,6 +27,13 @@ public class PlayerBehaviour : MonoBehaviour
     public Image _rightCrosshair;
     public Image _topCrosshair;
     public Image _botCrosshair;
+    private Vector2 topPos;
+    private Vector2 botPos;
+    private Vector2 leftPos;
+    private Vector2 rightPos;
+
+    public float crosshairSpreadAmount = 30f;
+    public float crosshairSpreadDuration = 0.2f;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +44,10 @@ public class PlayerBehaviour : MonoBehaviour
         _groundChecker = transform.GetChild(0);
         Cursor.lockState = CursorLockMode.Locked;
         _fpscam = transform.GetChild(1).GetComponent<Camera>();
+        topPos = _topCrosshair.rectTransform.position;
+        botPos = _botCrosshair.rectTransform.position;
+        leftPos = _leftCrosshair.rectTransform.position;
+        rightPos = _rightCrosshair.rectTransform.position;
     }
 
     // Update is called once per frame
@@ -143,8 +154,10 @@ public class PlayerBehaviour : MonoBehaviour
                 Debug.Log("Acertou inimigo");
             }
         }
-        AnimateCrosshair();
         _gun.gameObject.GetComponent<BasicWeaponBehaviour>().ShootBullet();
+        AnimateCameraFOV();
+        AnimateCrosshair();
+        Recoil();
     }
 
     void PointGunToCenter()
@@ -162,9 +175,56 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+    void AnimateCameraFOV()
+    {
+        StopCoroutine("CameraFOVEffect");
+        StartCoroutine("CameraFOVEffect");
+    }
+
+    IEnumerator CameraFOVEffect()
+    {
+        _fpscam.fieldOfView = 60;
+        for (int i = 0; i < 5; i++)
+        {
+            _fpscam.fieldOfView = _fpscam.fieldOfView - 1;
+            yield return new WaitForSeconds(0.0005f);
+        }
+        for (int g = 0; g < 5; g++)
+        {
+            _fpscam.fieldOfView = _fpscam.fieldOfView + 1;
+            yield return new WaitForSeconds(0.0005f);
+        }
+    }
+
     void AnimateCrosshair()
     {
-        
+        StopCoroutine("AnimateCrosshairCoroutine");
+        StartCoroutine("AnimateCrosshairCoroutine");
+    }
+
+    IEnumerator AnimateCrosshairCoroutine()
+    {
+        // Reset to original position.
+        _topCrosshair.rectTransform.position = topPos;
+        _botCrosshair.rectTransform.position = botPos;
+        _leftCrosshair.rectTransform.position = leftPos;
+        _rightCrosshair.rectTransform.position = rightPos;
+
+        _topCrosshair.rectTransform.position = new Vector2(_topCrosshair.rectTransform.position.x, _topCrosshair.rectTransform.position.y + crosshairSpreadAmount);
+        _botCrosshair.rectTransform.position = new Vector2(_botCrosshair.rectTransform.position.x, _botCrosshair.rectTransform.position.y - crosshairSpreadAmount);
+        _leftCrosshair.rectTransform.position = new Vector2(_leftCrosshair.rectTransform.position.x - crosshairSpreadAmount, _leftCrosshair.rectTransform.position.y);
+        _rightCrosshair.rectTransform.position = new Vector2(_rightCrosshair.rectTransform.position.x + crosshairSpreadAmount, _rightCrosshair.rectTransform.position.y);
+        yield return new WaitForSeconds(crosshairSpreadDuration);
+        _topCrosshair.rectTransform.position = new Vector2(_topCrosshair.rectTransform.position.x, _topCrosshair.rectTransform.position.y - crosshairSpreadAmount);
+        _botCrosshair.rectTransform.position = new Vector2(_botCrosshair.rectTransform.position.x, _botCrosshair.rectTransform.position.y + crosshairSpreadAmount);
+        _leftCrosshair.rectTransform.position = new Vector2(_leftCrosshair.rectTransform.position.x + crosshairSpreadAmount, _leftCrosshair.rectTransform.position.y);
+        _rightCrosshair.rectTransform.position = new Vector2(_rightCrosshair.rectTransform.position.x - crosshairSpreadAmount, _rightCrosshair.rectTransform.position.y);
+        yield return null;
+    }
+
+    void Recoil()
+    {
+        _fpscam.GetComponent<FPSCameraBehavior>().ApplyRecoil(2f);
     }
 
 }
