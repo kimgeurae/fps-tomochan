@@ -275,6 +275,8 @@ MonoBehaviour:
   _rightCrosshair: {fileID: 0}
   _topCrosshair: {fileID: 0}
   _botCrosshair: {fileID: 0}
+  crosshairSpreadAmount: 30
+  crosshairSpreadDuration: 0.2
 --- !u!1 &2799495567881352211
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,12 +397,12 @@ PrefabInstance:
     - target: {fileID: 7135954901141795602, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.37099993
+      value: -0.575
       objectReference: {fileID: 0}
     - target: {fileID: 7135954901141795602, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.098
+      value: 1.256
       objectReference: {fileID: 0}
     - target: {fileID: 7135954901141795602, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
         type: 3}

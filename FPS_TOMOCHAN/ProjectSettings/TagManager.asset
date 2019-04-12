@@ -12,6 +12,7 @@ TagManager:
   - PhysicsObj
   - GroundChecker
   - PlayerAlt
+  - Wall
   layers:
   - Default
   - TransparentFX

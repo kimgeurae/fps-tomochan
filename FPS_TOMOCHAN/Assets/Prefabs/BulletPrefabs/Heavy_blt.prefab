@@ -99,6 +99,8 @@ MonoBehaviour:
   bulletSpeed: 50
   destroyTime: 2
   critChance: 0.15
+  _bulletHole: {fileID: 4475570361625276619, guid: 26e972dbb290add40af8479675d51d55,
+    type: 3}
 --- !u!54 &3249974220644883158
 Rigidbody:
   m_ObjectHideFlags: 0

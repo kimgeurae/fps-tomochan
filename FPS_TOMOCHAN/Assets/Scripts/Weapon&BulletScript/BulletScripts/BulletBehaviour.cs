@@ -19,6 +19,7 @@ public class BulletBehaviour : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float critChance;
     Vector3 offset = new Vector3(0f, 1f, 0f);
+    public GameObject _bulletHole;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +43,19 @@ public class BulletBehaviour : MonoBehaviour
         transform.Translate(new Vector3(0f, 0f, bulletSpeed) * Time.deltaTime);
     }
 
+    void BulletHole()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(gameObject.transform.position, gameObject.transform.forward, out hit, 100f))
+        {
+            Debug.Log(hit);
+            if (hit.transform.gameObject.CompareTag("Wall"))
+            {
+                Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
+            }
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Enemies"))
@@ -63,6 +77,12 @@ public class BulletBehaviour : MonoBehaviour
                 DamagePopup.Create(other.transform.position + offset, ndmg, false);
                 Destroy(this.gameObject);
             }
+        }
+        if (other.gameObject.CompareTag("Wall"))
+        {
+            BulletHole();
+            Debug.Log("Acerto");
+            Destroy(this.gameObject);
         }
     }
 }
