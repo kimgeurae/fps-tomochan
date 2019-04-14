@@ -38,9 +38,15 @@ public class FPSCameraBehavior : MonoBehaviour
         _player.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, _player.transform.up);
     }
 
-    public void ApplyRecoil(float recoilAmount)
+    public void ApplyRecoil(float vRecoilAmount, float hRecoilAmount, bool multiplier)
     {
-        mouseLook.y += recoilAmount;
+        mouseLook.y += vRecoilAmount;
+        if (multiplier)
+            mouseLook.x += hRecoilAmount;
+        else
+        {
+            mouseLook.x -= hRecoilAmount;
+        }
     }
 
 }

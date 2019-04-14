@@ -271,12 +271,6 @@ MonoBehaviour:
   dashDistance: 5
   drag: {x: 15, y: 1, z: 15}
   dragDuration: 2
-  _leftCrosshair: {fileID: 0}
-  _rightCrosshair: {fileID: 0}
-  _topCrosshair: {fileID: 0}
-  _botCrosshair: {fileID: 0}
-  crosshairSpreadAmount: 30
-  crosshairSpreadDuration: 0.2
 --- !u!1 &2799495567881352211
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,6 +437,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: _fpscam
+      value: 
+      objectReference: {fileID: 2799495567881352205}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: _notarget
+      value: 
+      objectReference: {fileID: 2799495567673413397}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: critChance
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: bulletMinDmg
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: bulletMaxDmg
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: bulletMinCritDmg
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: bulletMaxCritDmg
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792528020579230565, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5,
+        type: 3}
+      propertyPath: fireRate
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b6ce0c0ff8dd9c4d94ba92dabf945f5, type: 3}

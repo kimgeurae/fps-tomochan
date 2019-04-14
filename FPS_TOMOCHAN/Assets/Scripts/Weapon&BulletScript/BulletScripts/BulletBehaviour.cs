@@ -5,21 +5,11 @@ using UnityEngine;
 public class BulletBehaviour : MonoBehaviour
 {
     [SerializeField]
-    int bulletMinDmg;
-    [SerializeField]
-    int bulletMaxDmg;
-    [SerializeField]
-    int bulletMinCritDmg;
-    [SerializeField]
-    int bulletMaxCritDmg;
-    [SerializeField]
     float bulletSpeed;
     [SerializeField]
     float destroyTime;
-    [Range(0.0f, 1.0f)]
-    public float critChance;
-    Vector3 offset = new Vector3(0f, 1f, 0f);
     public GameObject _bulletHole;
+    public GameObject _bloodbulletHole;
 
     // Start is called before the first frame update
     void Start()
@@ -43,16 +33,17 @@ public class BulletBehaviour : MonoBehaviour
         transform.Translate(new Vector3(0f, 0f, bulletSpeed) * Time.deltaTime);
     }
 
-    void BulletHole()
+    // Formula i have to use distance/velocity = time.
+    // distance = hit.distance, velocity = bulletSpeed & time = x.
+    public void BulletHole(RaycastHit hit)
     {
-        RaycastHit hit;
-        if (Physics.Raycast(gameObject.transform.position, gameObject.transform.forward, out hit, 100f))
+        if (hit.transform.gameObject.CompareTag("Wall"))
         {
-            Debug.Log(hit);
-            if (hit.transform.gameObject.CompareTag("Wall"))
-            {
-                Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
-            }
+            Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+        }
+        if (hit.transform.gameObject.CompareTag("Enemies"))
+        {
+            Instantiate(_bloodbulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
         }
     }
 
@@ -60,28 +51,15 @@ public class BulletBehaviour : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemies"))
         {
-            bool isCrit = Random.value < critChance;
-            if (isCrit)
-            {
-                int cdmg = Random.Range(bulletMinCritDmg, bulletMaxCritDmg);
-                other.gameObject.GetComponent<EnemiesBasicBehaviour>().ApplyDamage(cdmg);
-                Debug.Log("Enemy has been hitted with a Critical Hit!!! And Received a damage of: " + cdmg);
-                DamagePopup.Create(other.transform.position + offset, cdmg, true);
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                int ndmg = Random.Range(bulletMinDmg, bulletMaxDmg);
-                other.gameObject.GetComponent<EnemiesBasicBehaviour>().ApplyDamage(ndmg);
-                Debug.Log("Enemy has been hitted with a Normal Hit! And Received the damage of: " + ndmg);
-                DamagePopup.Create(other.transform.position + offset, ndmg, false);
-                Destroy(this.gameObject);
-            }
+            Destroy(this.gameObject);
         }
         if (other.gameObject.CompareTag("Wall"))
         {
-            BulletHole();
             Debug.Log("Acerto");
+            Destroy(this.gameObject);
+        }
+        if (other.gameObject.CompareTag("Target"))
+        {
             Destroy(this.gameObject);
         }
     }

@@ -13,6 +13,7 @@ TagManager:
   - GroundChecker
   - PlayerAlt
   - Wall
+  - Target
   layers:
   - Default
   - TransparentFX

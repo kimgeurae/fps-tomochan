@@ -92,14 +92,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 230f198d7dd014644b5af1514b8d5048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletMinDmg: 10
-  bulletMaxDmg: 15
-  bulletMinCritDmg: 30
-  bulletMaxCritDmg: 35
   bulletSpeed: 50
   destroyTime: 2
-  critChance: 0.15
-  _bulletHole: {fileID: 4475570361625276619, guid: 26e972dbb290add40af8479675d51d55,
+  _bulletHole: {fileID: 6775126955311740587, guid: d57a52479fcfeed4cad7cc40fd76ab32,
+    type: 3}
+  _bloodbulletHole: {fileID: 6775126955311740587, guid: 320c25d0bbce8cc45919de365b365a8c,
     type: 3}
 --- !u!54 &3249974220644883158
 Rigidbody:
