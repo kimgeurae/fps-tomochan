@@ -53,10 +53,41 @@ public class BasicWeaponBehaviour : MonoBehaviour
     public float crosshairSpreadAmount = 30f;
     public float crosshairSpreadDuration = 0.2f;
 
+    [SerializeField]
+    int maxAmmo = 90;
+    [SerializeField]
+    int maxMagazineAmmo = 30;
+    int magazineAmmo;
+    int actualAmmo;
+    bool isReloading = false;
+    [SerializeField]
+    float emptyReloadTime = 1f;
+    [SerializeField]
+    Text _ammoInfo;
+
+    [SerializeField]
+    Image _hudBullet01;
+    [SerializeField]
+    Image _hudBullet02;
+
+    [SerializeField]
+    Text _reloadWarning;
+
+    [SerializeField]
+    Image _reloadCircle;
+
+    Animator _anim;
+
+    public ParticleSystem muzzleFlashParticle;
+
     // Start is called before the first frame update
     void Start()
     {
+        _anim = transform.GetChild(3).GetComponent<Animator>();
+
         weaponMode = WeaponMode.Semi;
+        actualAmmo = maxAmmo;
+        magazineAmmo = maxMagazineAmmo;
 
         topPos = _topCrosshair.rectTransform.position;
         botPos = _botCrosshair.rectTransform.position;
@@ -67,7 +98,11 @@ public class BasicWeaponBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PointGunToCenter();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ReloadRequest();
+        }
+        //PointGunToCenter();
         UpdateGUI();
         if (Input.GetButtonUp("Fire1"))
         {
@@ -85,6 +120,101 @@ public class BasicWeaponBehaviour : MonoBehaviour
     void UpdateGUI()
     {
         _weaponModeGUI.text = weaponMode.ToString();
+        _ammoInfo.text = "Current Ammo: " + magazineAmmo.ToString() + " / " + actualAmmo.ToString();
+        if (weaponMode == WeaponMode.Semi)
+        {
+            Color c;
+            c = _hudBullet01.color;
+            c.a = 0.1f;
+            _hudBullet01.color = c;
+            _hudBullet02.color = c;
+        }
+        if (weaponMode == WeaponMode.Auto)
+        {
+            Color c;
+            c = _hudBullet01.color;
+            c.a = 255;
+            _hudBullet01.color = c;
+            _hudBullet02.color = c;
+        }
+        if (magazineAmmo > 0)
+        {
+            _reloadWarning.enabled = false;
+        }
+        else
+        {
+            _reloadWarning.enabled = true;
+        }
+    }
+
+    void ReloadCircleHUD(float f)
+    {
+        IEnumerator coroutine;
+        coroutine = ReloadProgressCircle(f);
+        StopCoroutine("ReloadProgressCircle");
+        StartCoroutine(coroutine);
+    }
+
+    IEnumerator ReloadProgressCircle(float time)
+    {
+        //_anim.speed = (1f / 2f);
+        //_anim.SetBool("isReloading", true);
+        _reloadCircle.gameObject.SetActive(true);
+        _reloadCircle.fillAmount = 0f;
+        Debug.Log("Coroutine ReloadProgressCircleCheck == OK");
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(time/10);
+            _reloadCircle.fillAmount += 0.1f;
+        }
+        _reloadCircle.gameObject.SetActive(false);
+    }
+
+    void ReloadRequest()
+    {
+        if (magazineAmmo < maxMagazineAmmo)
+        {
+            IEnumerator coroutine;
+            float time = 0f;
+            if (magazineAmmo == 0)
+            {
+                time = emptyReloadTime;
+            }
+            else
+            {
+                time = emptyReloadTime + magazineAmmo / 10f;
+            }
+            coroutine = Reload(time);
+            StartCoroutine(coroutine);
+            ReloadCircleHUD(time);
+        }
+    }
+
+    IEnumerator Reload(float t)
+    {
+        isReloading = true;
+        yield return new WaitForSeconds(t);
+        if (actualAmmo >= maxMagazineAmmo)
+        {
+            if (magazineAmmo == 0)
+            {
+                magazineAmmo = maxMagazineAmmo;
+                actualAmmo -= maxMagazineAmmo;
+                isReloading = false;
+            }
+            else
+            {
+                actualAmmo -= (maxMagazineAmmo - magazineAmmo);
+                magazineAmmo = maxMagazineAmmo;
+                isReloading = false;
+            }
+        }
+        else
+        {
+            magazineAmmo = actualAmmo + magazineAmmo;
+            actualAmmo = 0;
+            isReloading = false;
+        }
     }
 
     public void Shoot()
@@ -92,17 +222,19 @@ public class BasicWeaponBehaviour : MonoBehaviour
         switch (weaponMode)
         {
             case WeaponMode.Semi:
-                if (semiCanShoot)
+                if ((semiCanShoot && magazineAmmo > 0) && !isReloading)
                 {
                     SemiModeShoot();
                     semiCanShoot = false;
+                    magazineAmmo--;
                 }
                 break;
             case WeaponMode.Auto:
-                if (Time.time >= nextTimeToFire)
+                if ((Time.time >= nextTimeToFire && magazineAmmo > 0) && !isReloading)
                 {
                     nextTimeToFire = Time.time + 1f / fireRate;
                     SemiModeShoot();
+                    magazineAmmo--;
                 }
                 break;
             case WeaponMode.Burst:
@@ -112,6 +244,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
 
     void SemiModeShoot()
     {
+        muzzleFlashParticle.Play();
         RaycastHit hit;
         Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.yellow, 2.5f);
         if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f))
@@ -189,12 +322,12 @@ public class BasicWeaponBehaviour : MonoBehaviour
     IEnumerator CameraFOVEffect()
     {
         _fpscam.fieldOfView = 60;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 2; i++)
         {
             _fpscam.fieldOfView = _fpscam.fieldOfView - 1;
             yield return new WaitForSeconds(0.0005f);
         }
-        for (int g = 0; g < 5; g++)
+        for (int g = 0; g < 2; g++)
         {
             _fpscam.fieldOfView = _fpscam.fieldOfView + 1;
             yield return new WaitForSeconds(0.0005f);

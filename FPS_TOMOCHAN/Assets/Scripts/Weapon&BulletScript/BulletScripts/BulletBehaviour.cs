@@ -25,7 +25,15 @@ public class BulletBehaviour : MonoBehaviour
 
     void SelfDestruction()
     {
-        Destroy(this.gameObject, destroyTime);
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))
+        {
+            Destroy(this.gameObject, hit.distance / bulletSpeed);
+        }
+        else
+        {
+            Destroy(this.gameObject, destroyTime);
+        }
     }
 
     void BulletMovement()
@@ -43,24 +51,8 @@ public class BulletBehaviour : MonoBehaviour
         }
         if (hit.transform.gameObject.CompareTag("Enemies"))
         {
-            Instantiate(_bloodbulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            Instantiate(_bloodbulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal), hit.transform);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Enemies"))
-        {
-            Destroy(this.gameObject);
-        }
-        if (other.gameObject.CompareTag("Wall"))
-        {
-            Debug.Log("Acerto");
-            Destroy(this.gameObject);
-        }
-        if (other.gameObject.CompareTag("Target"))
-        {
-            Destroy(this.gameObject);
-        }
-    }
 }
