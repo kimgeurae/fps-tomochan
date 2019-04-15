@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class BulletBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    float bulletSpeed;
+    public float bulletSpeed = 100f;
     [SerializeField]
     float destroyTime;
     public GameObject _bulletHole;
@@ -56,11 +55,12 @@ public class BulletBehaviour : MonoBehaviour
 
     IEnumerator CallBulletHole(RaycastHit hit)
     {
-        yield return new WaitForSeconds(hit.distance/100f);
+        yield return new WaitForSeconds(hit.distance/bulletSpeed);
         if (hit.transform.gameObject.CompareTag("Wall") || hit.transform.gameObject.CompareTag("Target"))
         {
             //Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
             var myObj = Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            Debug.Log("Bullet Hole was sucefully generate");
             //myObj.transform.parent = hit.transform;
             if (hit.transform.gameObject.CompareTag("Target"))
             {
@@ -73,6 +73,7 @@ public class BulletBehaviour : MonoBehaviour
         {
             Instantiate(_bloodbulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal), hit.transform);
             Destroy(this.gameObject, hit.distance / bulletSpeed);
+            Debug.Log("Blood Hole was sucefully generate");
         }
     }
 

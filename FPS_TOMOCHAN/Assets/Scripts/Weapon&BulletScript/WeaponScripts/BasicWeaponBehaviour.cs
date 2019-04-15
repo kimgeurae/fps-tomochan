@@ -304,7 +304,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
 
     IEnumerator HitImpact(RaycastHit hit)
     {
-        yield return new WaitForSeconds(hit.distance / 100f);
+        yield return new WaitForSeconds(hit.distance / _bulletPrefab.GetComponent<BulletBehaviour>().bulletSpeed);
         if (hit.transform.gameObject.CompareTag("Target"))
             Instantiate(_impactMetal, hit.point, Quaternion.LookRotation(hit.normal));
         else if (hit.transform.gameObject.CompareTag("Enemies"))
