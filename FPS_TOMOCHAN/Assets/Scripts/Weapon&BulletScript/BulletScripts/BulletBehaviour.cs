@@ -25,7 +25,10 @@ public class BulletBehaviour : MonoBehaviour
 
     void SelfDestruction()
     {
+        Destroy(this.gameObject, 10f);
+        /*        
         RaycastHit hit;
+        
         if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))
         {
             Destroy(this.gameObject, hit.distance / bulletSpeed);
@@ -34,6 +37,7 @@ public class BulletBehaviour : MonoBehaviour
         {
             Destroy(this.gameObject, destroyTime);
         }
+        */
     }
 
     void BulletMovement()
@@ -45,13 +49,28 @@ public class BulletBehaviour : MonoBehaviour
     // distance = hit.distance, velocity = bulletSpeed & time = x.
     public void BulletHole(RaycastHit hit)
     {
-        if (hit.transform.gameObject.CompareTag("Wall"))
+        //StopCoroutine("CallBulletHole");
+        IEnumerator coroutine = CallBulletHole(hit);
+        StartCoroutine(coroutine);
+    }
+
+    IEnumerator CallBulletHole(RaycastHit hit)
+    {
+        yield return new WaitForSeconds(hit.distance/100f);
+        if (hit.transform.gameObject.CompareTag("Wall") || hit.transform.gameObject.CompareTag("Target"))
         {
-            Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            var myObj = Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            if (hit.transform.gameObject.CompareTag("Target"))
+            {
+                hit.transform.gameObject.GetComponent<TargetScript>().SetTargetDown();
+                myObj.transform.parent = hit.transform;
+            }
+            Destroy(this.gameObject, hit.distance / bulletSpeed);
         }
         if (hit.transform.gameObject.CompareTag("Enemies"))
         {
             Instantiate(_bloodbulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal), hit.transform);
+            Destroy(this.gameObject, hit.distance / bulletSpeed);
         }
     }
 

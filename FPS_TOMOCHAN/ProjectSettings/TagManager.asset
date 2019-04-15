@@ -14,6 +14,8 @@ TagManager:
   - PlayerAlt
   - Wall
   - Target
+  - FxTemporaire
+  - Bullet
   layers:
   - Default
   - TransparentFX

@@ -80,6 +80,11 @@ public class BasicWeaponBehaviour : MonoBehaviour
 
     public ParticleSystem muzzleFlashParticle;
 
+    public GameObject _impactMetal, _impactConcrete, _impactBlood;
+
+    [SerializeField]
+    GameObject _bulletPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -102,7 +107,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
         {
             ReloadRequest();
         }
-        //PointGunToCenter();
+        PointGunToCenter();
         UpdateGUI();
         if (Input.GetButtonUp("Fire1"))
         {
@@ -247,6 +252,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
         muzzleFlashParticle.Play();
         RaycastHit hit;
         Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.yellow, 2.5f);
+        SpawnBullet();
+        _bullet = GameObject.FindGameObjectWithTag("Bullet");
         if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f))
         {
             if (hit.transform.gameObject.CompareTag("Enemies"))
@@ -267,29 +274,49 @@ public class BasicWeaponBehaviour : MonoBehaviour
                     DamagePopup.Create(hit.transform.position + offset, ndmg, false);
                 }
                 _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
+                CallHitImpact(hit);
             }
             if (hit.transform.gameObject.CompareTag("Wall"))
             {
                 _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
+                CallHitImpact(hit);
             }
             if (hit.transform.gameObject.CompareTag("Target"))
             {
                 if (hit.transform.gameObject.GetComponent<TargetScript>().canGoDown)
                 {
                     _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
-                    hit.transform.gameObject.GetComponent<TargetScript>().SetTargetDown();
                 }
+                CallHitImpact(hit);
             }
         }
-        SpawnBullet();
         MuzzleFlash();
         AnimateCameraFOV();
         AnimateCrosshair();
         Recoil();
     }
 
+    private void CallHitImpact(RaycastHit hit)
+    {
+        IEnumerator coroutine = HitImpact(hit);
+        StopCoroutine("HitImpact");
+        StartCoroutine(coroutine);
+    }
+
+    IEnumerator HitImpact(RaycastHit hit)
+    {
+        yield return new WaitForSeconds(hit.distance / 100f);
+        if (hit.transform.gameObject.CompareTag("Target"))
+            Instantiate(_impactMetal, hit.point, Quaternion.LookRotation(hit.normal));
+        else if (hit.transform.gameObject.CompareTag("Enemies"))
+            Instantiate(_impactBlood, hit.point, Quaternion.LookRotation(hit.normal));
+        else if (hit.transform.gameObject.CompareTag("Wall"))
+            Instantiate(_impactConcrete, hit.point, Quaternion.LookRotation(hit.normal));
+    }
+
     private void SpawnBullet()
     {
+        _bullet = _bulletPrefab;
         Instantiate(_bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
     }
 
