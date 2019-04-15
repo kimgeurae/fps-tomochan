@@ -299,7 +299,6 @@ public class BasicWeaponBehaviour : MonoBehaviour
     private void CallHitImpact(RaycastHit hit)
     {
         IEnumerator coroutine = HitImpact(hit);
-        StopCoroutine("HitImpact");
         StartCoroutine(coroutine);
     }
 

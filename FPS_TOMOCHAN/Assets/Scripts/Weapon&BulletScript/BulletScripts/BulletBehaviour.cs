@@ -59,7 +59,9 @@ public class BulletBehaviour : MonoBehaviour
         yield return new WaitForSeconds(hit.distance/100f);
         if (hit.transform.gameObject.CompareTag("Wall") || hit.transform.gameObject.CompareTag("Target"))
         {
+            //Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
             var myObj = Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            //myObj.transform.parent = hit.transform;
             if (hit.transform.gameObject.CompareTag("Target"))
             {
                 hit.transform.gameObject.GetComponent<TargetScript>().SetTargetDown();
