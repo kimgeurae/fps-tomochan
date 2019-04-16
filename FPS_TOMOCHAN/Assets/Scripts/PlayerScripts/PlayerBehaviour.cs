@@ -22,6 +22,19 @@ public class PlayerBehaviour : MonoBehaviour
     public float dashDistance;
     public Vector3 drag;
     public float dragDuration;
+    private MeshFilter _meshFilter;
+    private Mesh _defaultMesh;
+    public Mesh _circleMesh;
+    private enum State
+    {
+        Stand,
+        Crouch,
+        Prone,
+        Slide,
+        Hook,
+    }
+    private State state;
+
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +45,9 @@ public class PlayerBehaviour : MonoBehaviour
         _groundChecker = transform.GetChild(0);
         Cursor.lockState = CursorLockMode.Locked;
         _fpscam = transform.GetChild(1).GetComponent<Camera>();
+        _meshFilter = GetComponent<MeshFilter>();
+        _defaultMesh = GetComponent<MeshFilter>().mesh;
+        state = State.Stand;
     }
 
     // Update is called once per frame
@@ -43,6 +59,7 @@ public class PlayerBehaviour : MonoBehaviour
         Dash();
         ApplyDrag();
         PlayerShoot();
+        Crouch();
     }
 
     private void Movement()
@@ -51,13 +68,42 @@ public class PlayerBehaviour : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
         Vector3 forwardMovement = transform.forward * verticalInput;
         Vector3 strafeMovement = transform.right * horizontalInput;
-        _controller.Move((forwardMovement + strafeMovement) * Time.deltaTime * speed);
+        switch (state)
+        {
+            case State.Stand:
+                _controller.Move((forwardMovement + strafeMovement) * Time.deltaTime * speed);
+                break;
+            case State.Crouch:
+                _controller.Move((forwardMovement + strafeMovement) * Time.deltaTime * speed / 2);
+                break;
+        }
         /*
         if (move != Vector3.zero)
         {
             transform.forward = move;
         }
         */
+    }
+
+    private void Crouch()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            _controller.height = 1f;
+            Vector3 offset = new Vector3(0f, -0.5f, 0f);
+            _controller.center = offset;
+            _fpscam.transform.localPosition = new Vector3(0f, 0f, 0.2f);
+            _meshFilter.mesh = _circleMesh;
+            state = State.Crouch;
+        }
+        else
+        {
+            _controller.height = 2;
+            _controller.center = Vector3.zero;
+            _fpscam.transform.localPosition = new Vector3(0f, 0.5f, 0.2f);
+            _meshFilter.mesh = _defaultMesh;
+            state = State.Stand;
+        }
     }
 
     private void Gravity()

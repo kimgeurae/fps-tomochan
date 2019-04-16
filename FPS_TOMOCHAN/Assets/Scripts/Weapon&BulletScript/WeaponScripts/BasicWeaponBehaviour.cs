@@ -327,7 +327,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
     void PointGunToCenter()
     {
         RaycastHit target;
-        Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.green, .01f);
+        Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.green, Time.deltaTime);
         if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out target, 100f) && target.distance > 5f)
         {
             transform.LookAt(target.point);
