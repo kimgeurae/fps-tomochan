@@ -56,17 +56,23 @@ public class BulletBehaviour : MonoBehaviour
     IEnumerator CallBulletHole(RaycastHit hit)
     {
         yield return new WaitForSeconds(hit.distance/bulletSpeed);
-        if (hit.transform.gameObject.CompareTag("Wall") || hit.transform.gameObject.CompareTag("Target"))
+        if (hit.transform.gameObject.CompareTag("Target"))
         {
             //Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
-            var myObj = Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            //var myObj = Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
+            Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal), hit.transform);
             Debug.Log("Bullet Hole was sucefully generate");
             //myObj.transform.parent = hit.transform;
             if (hit.transform.gameObject.CompareTag("Target"))
             {
                 hit.transform.gameObject.GetComponent<TargetScript>().SetTargetDown();
-                myObj.transform.parent = hit.transform;
+                //myObj.transform.parent = hit.transform;
             }
+            Destroy(this.gameObject, hit.distance / bulletSpeed);
+        }
+        if (hit.transform.gameObject.CompareTag("Wall"))
+        {
+            Instantiate(_bulletHole, hit.point, Quaternion.FromToRotation(Vector3.back, hit.normal));
             Destroy(this.gameObject, hit.distance / bulletSpeed);
         }
         if (hit.transform.gameObject.CompareTag("Enemies"))

@@ -121,7 +121,15 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && _isGrounded)
         {
-            _velocity.y += Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+            switch (state)
+            {
+                case State.Stand:
+                    _velocity.y += Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+                    break;
+                case State.Crouch:
+                    _velocity.y += Mathf.Sqrt(jumpHeight * -2f/2 * Physics.gravity.y);
+                    break;
+            }
         }
     }
 
@@ -130,7 +138,15 @@ public class PlayerBehaviour : MonoBehaviour
         if (Input.GetButtonDown("Dash") && _canDash)
         {
             Debug.Log("Dash Triggered");
-            _velocity += Vector3.Scale(transform.forward, dashDistance * new Vector3((Mathf.Log(1f / (Time.deltaTime * drag.x + 1)) / -Time.deltaTime), 0, (Mathf.Log(1f / (Time.deltaTime * drag.z + 1)) / -Time.deltaTime)));
+            switch (state)
+            {
+                case State.Stand:
+                    _velocity += Vector3.Scale(transform.forward, dashDistance * new Vector3((Mathf.Log(1f / (Time.deltaTime * drag.x + 1)) / -Time.deltaTime), 0, (Mathf.Log(1f / (Time.deltaTime * drag.z + 1)) / -Time.deltaTime)));
+                    break;
+                case State.Crouch:
+                    _velocity += (Vector3.Scale(transform.forward, dashDistance * new Vector3((Mathf.Log(1f / (Time.deltaTime * drag.x + 1)) / -Time.deltaTime), 0, (Mathf.Log(1f / (Time.deltaTime * drag.z + 1)) / -Time.deltaTime))))/2;
+                    break;
+            }
             ActiveDashTimer();
         }        
     }

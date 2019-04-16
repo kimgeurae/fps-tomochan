@@ -252,8 +252,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
         muzzleFlashParticle.Play();
         RaycastHit hit;
         Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.yellow, 2.5f);
-        SpawnBullet();
-        _bullet = GameObject.FindGameObjectWithTag("Bullet");
+        var spawnedBullet = Instantiate(_bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+        _bullet = spawnedBullet;
         if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f))
         {
             if (hit.transform.gameObject.CompareTag("Enemies"))
@@ -315,8 +315,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
 
     private void SpawnBullet()
     {
-        _bullet = _bulletPrefab;
-        Instantiate(_bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+        //_bullet = _bulletPrefab;
+        Instantiate(_bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
     }
 
     private void MuzzleFlash()
