@@ -25,6 +25,7 @@ public class BossBattleTrigger : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             _boss.SetActive(true);
+            //this.gameObject.SetActive(false);
         }
     }
 

@@ -85,6 +85,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
     [SerializeField]
     GameObject _bulletPrefab;
 
+    LayerMask ignoreRaycast;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -98,6 +100,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
         botPos = _botCrosshair.rectTransform.position;
         leftPos = _leftCrosshair.rectTransform.position;
         rightPos = _rightCrosshair.rectTransform.position;
+
+        ignoreRaycast = ~0 - LayerMask.GetMask("RaycastIgnore");
     }
 
     // Update is called once per frame
@@ -254,7 +258,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
         Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.yellow, 2.5f);
         var spawnedBullet = Instantiate(_bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
         _bullet = spawnedBullet;
-        if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f))
+        if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f, ignoreRaycast))
         {
             if (hit.transform.gameObject.CompareTag("Enemies"))
             {

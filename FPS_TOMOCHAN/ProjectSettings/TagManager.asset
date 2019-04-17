@@ -16,6 +16,7 @@ TagManager:
   - Target
   - FxTemporaire
   - Bullet
+  - EventTriggers
   layers:
   - Default
   - TransparentFX
@@ -28,7 +29,7 @@ TagManager:
   - PostProcessing
   - Ground
   - GunLayer
-  - 
+  - RaycastIgnore
   - 
   - 
   - 

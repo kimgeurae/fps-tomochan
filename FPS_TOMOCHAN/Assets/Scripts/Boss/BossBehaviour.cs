@@ -132,5 +132,9 @@ public class BossBehaviour : MonoBehaviour
             if (state == State.Awakened)
                 state = State.Recharging;
         }
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            state = State.Recharging;
+        }
     }
 }

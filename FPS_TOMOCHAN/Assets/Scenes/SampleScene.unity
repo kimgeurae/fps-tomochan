@@ -600,9 +600,9 @@ GameObject:
   - component: {fileID: 189354716}
   - component: {fileID: 189354715}
   - component: {fileID: 189354714}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: BossFightAreaTrigger
-  m_TagString: Untagged
+  m_TagString: EventTriggers
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
