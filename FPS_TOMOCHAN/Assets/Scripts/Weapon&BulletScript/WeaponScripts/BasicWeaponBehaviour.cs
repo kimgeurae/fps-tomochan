@@ -171,11 +171,12 @@ public class BasicWeaponBehaviour : MonoBehaviour
         _reloadCircle.gameObject.SetActive(true);
         _reloadCircle.fillAmount = 0f;
         Debug.Log("Coroutine ReloadProgressCircleCheck == OK");
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 100; i++)
         {
-            yield return new WaitForSeconds(time/10);
-            _reloadCircle.fillAmount += 0.1f;
+            yield return new WaitForSeconds(time/100);
+            _reloadCircle.fillAmount += 0.01f;
         }
+        ReloadWeapon();
         _reloadCircle.gameObject.SetActive(false);
     }
 
@@ -194,8 +195,44 @@ public class BasicWeaponBehaviour : MonoBehaviour
                 time = emptyReloadTime + magazineAmmo / 10f;
             }
             coroutine = Reload(time);
-            StartCoroutine(coroutine);
+            //StartCoroutine(coroutine);
             ReloadCircleHUD(time);
+        }
+    }
+
+    void ReloadWeapon()
+    {
+        isReloading = true;
+        if (actualAmmo >= maxMagazineAmmo)
+        {
+            if (magazineAmmo == 0)
+            {
+                magazineAmmo = maxMagazineAmmo;
+                actualAmmo -= maxMagazineAmmo;
+                isReloading = false;
+            }
+            else
+            {
+                actualAmmo -= (maxMagazineAmmo - magazineAmmo);
+                magazineAmmo = maxMagazineAmmo;
+                isReloading = false;
+            }
+        }
+        else
+        {
+            if (actualAmmo + magazineAmmo <= 30)
+            {
+                magazineAmmo = actualAmmo + magazineAmmo;
+                actualAmmo = 0;
+                isReloading = false;
+            }
+            else
+            {
+                int difference = magazineAmmo - maxMagazineAmmo;
+                magazineAmmo = maxMagazineAmmo;
+                actualAmmo += difference;
+                isReloading = false;
+            }
         }
     }
 

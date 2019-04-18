@@ -25,7 +25,7 @@ public class BossBehaviour : MonoBehaviour
     }
     private State state;
 
-    Vector2[] arenaLimit = { new Vector2(-12.5f, -43.8f), new Vector2(12.5f, 18.2f) };
+    Vector2[] arenaLimit = { new Vector2(-12.5f, -43.8f), new Vector2(12.5f, -18.8f) };
 
     float rechargeTime = 2f;
     float rechargeValue = 0f;
@@ -104,7 +104,8 @@ public class BossBehaviour : MonoBehaviour
     void GetTarget()
     {
         point[0] = transform.position;
-        point[2] = new Vector3(Mathf.Clamp(_player.transform.position.x, -12.5f, 12.5f), Mathf.Clamp(_player.transform.position.y, 1.483867f, 10f), Mathf.Clamp(_player.transform.position.z, -43.8f, 18.2f));
+        point[2] = _player.transform.position;
+        point[2] = new Vector3(Mathf.Clamp(point[2].x, -12.5f, 12.5f), Mathf.Clamp(point[2].y, 1.483867f, 1.483868f), Mathf.Clamp(point[2].z, -43.2f, -18.2f));
         point[1] = point[0] + (point[2] - point[0]) / 2 + Vector3.up * 15f;
         count = 0;
     }
