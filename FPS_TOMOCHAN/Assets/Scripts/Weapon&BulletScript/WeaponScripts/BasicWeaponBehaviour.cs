@@ -436,7 +436,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
         }
         else
         {
-            bool leftOrRight = Random.value > 0.9f;
+            bool leftOrRight = Random.value > 0.5f;
             _fpscam.GetComponent<FPSCameraBehavior>().ApplyRecoil(verticalRecoil, verticalRecoil / 25, leftOrRight);
         }
     }
