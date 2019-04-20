@@ -17,6 +17,8 @@ TagManager:
   - FxTemporaire
   - Bullet
   - EventTriggers
+  - GunSlot
+  - Boss
   layers:
   - Default
   - TransparentFX

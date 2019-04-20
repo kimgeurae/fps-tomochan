@@ -11,11 +11,13 @@ public class FPSCameraBehavior : MonoBehaviour
     public float smoothing = 2.0f;
 
     GameObject _player;
+    Camera _fpscam;
 
     // Start is called before the first frame update
     void Start()
     {
         _player = this.transform.parent.gameObject;
+        _fpscam = GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -38,10 +40,10 @@ public class FPSCameraBehavior : MonoBehaviour
         _player.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, _player.transform.up);
     }
 
-    public void ApplyRecoil(float vRecoilAmount, float hRecoilAmount, bool multiplier)
+    public void ApplyRecoil(float vRecoilAmount, float hRecoilAmount, bool xdirection)
     {
         mouseLook.y += vRecoilAmount;
-        if (multiplier)
+        if (xdirection)
             mouseLook.x += hRecoilAmount;
         else
         {
@@ -49,4 +51,24 @@ public class FPSCameraBehavior : MonoBehaviour
         }
     }
 
+    public void AnimateCameraFOV()
+    {
+        StopCoroutine("CameraFOVEffect");
+        StartCoroutine("CameraFOVEffect");
+    }
+
+    IEnumerator CameraFOVEffect()
+    {
+        _fpscam.fieldOfView = 60;
+        for (int i = 0; i < 2; i++)
+        {
+            _fpscam.fieldOfView = _fpscam.fieldOfView - 1;
+            yield return new WaitForSeconds(0.0005f);
+        }
+        for (int g = 0; g < 2; g++)
+        {
+            _fpscam.fieldOfView = _fpscam.fieldOfView + 1;
+            yield return new WaitForSeconds(0.0005f);
+        }
+    }
 }

@@ -41,18 +41,6 @@ public class BasicWeaponBehaviour : MonoBehaviour
     float nextTimeToFire = 0f;
     bool semiCanShoot = true;
 
-    public Image _leftCrosshair;
-    public Image _rightCrosshair;
-    public Image _topCrosshair;
-    public Image _botCrosshair;
-    private Vector2 topPos;
-    private Vector2 botPos;
-    private Vector2 leftPos;
-    private Vector2 rightPos;
-
-    public float crosshairSpreadAmount = 30f;
-    public float crosshairSpreadDuration = 0.2f;
-
     [SerializeField]
     int maxAmmo = 90;
     [SerializeField]
@@ -87,21 +75,20 @@ public class BasicWeaponBehaviour : MonoBehaviour
 
     LayerMask ignoreRaycast;
 
+    GameObject _player;
+
     // Start is called before the first frame update
     void Start()
     {
-        _anim = transform.GetChild(3).GetComponent<Animator>();
+        //_anim = transform.GetChild(3).GetComponent<Animator>();
 
         weaponMode = WeaponMode.Semi;
         actualAmmo = maxAmmo;
         magazineAmmo = maxMagazineAmmo;
 
-        topPos = _topCrosshair.rectTransform.position;
-        botPos = _botCrosshair.rectTransform.position;
-        leftPos = _leftCrosshair.rectTransform.position;
-        rightPos = _rightCrosshair.rectTransform.position;
-
         ignoreRaycast = ~0 - LayerMask.GetMask("RaycastIgnore");
+
+        _player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -156,30 +143,6 @@ public class BasicWeaponBehaviour : MonoBehaviour
         }
     }
 
-    void ReloadCircleHUD(float f)
-    {
-        IEnumerator coroutine;
-        coroutine = ReloadProgressCircle(f);
-        StopCoroutine("ReloadProgressCircle");
-        StartCoroutine(coroutine);
-    }
-
-    IEnumerator ReloadProgressCircle(float time)
-    {
-        //_anim.speed = (1f / 2f);
-        //_anim.SetBool("isReloading", true);
-        _reloadCircle.gameObject.SetActive(true);
-        _reloadCircle.fillAmount = 0f;
-        Debug.Log("Coroutine ReloadProgressCircleCheck == OK");
-        for (int i = 0; i < 100; i++)
-        {
-            yield return new WaitForSeconds(time/100);
-            _reloadCircle.fillAmount += 0.01f;
-        }
-        ReloadWeapon();
-        _reloadCircle.gameObject.SetActive(false);
-    }
-
     void ReloadRequest()
     {
         if (magazineAmmo < maxMagazineAmmo)
@@ -196,11 +159,11 @@ public class BasicWeaponBehaviour : MonoBehaviour
             }
             coroutine = Reload(time);
             //StartCoroutine(coroutine);
-            ReloadCircleHUD(time);
+            _player.GetComponent<PlayerHUDBehaviour>().ReloadCircleHUD(time);
         }
     }
 
-    void ReloadWeapon()
+    public void ReloadWeapon()
     {
         isReloading = true;
         if (actualAmmo >= maxMagazineAmmo)
@@ -331,9 +294,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
                 CallHitImpact(hit);
             }
         }
-        MuzzleFlash();
-        AnimateCameraFOV();
-        AnimateCrosshair();
+        _fpscam.GetComponent<FPSCameraBehavior>().AnimateCameraFOV();
+        _player.GetComponent<PlayerHUDBehaviour>().AnimateCrosshair();
         Recoil();
     }
 
@@ -348,7 +310,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
         yield return new WaitForSeconds(hit.distance / _bulletPrefab.GetComponent<BulletBehaviour>().bulletSpeed);
         if (hit.transform.gameObject.CompareTag("Target"))
             Instantiate(_impactMetal, hit.point, Quaternion.LookRotation(hit.normal));
-        else if (hit.transform.gameObject.CompareTag("Enemies"))
+        else if (hit.transform.gameObject.CompareTag("Enemies") || hit.transform.gameObject.CompareTag("Boss"))
             Instantiate(_impactBlood, hit.point, Quaternion.LookRotation(hit.normal));
         else if (hit.transform.gameObject.CompareTag("Wall"))
             Instantiate(_impactConcrete, hit.point, Quaternion.LookRotation(hit.normal));
@@ -360,71 +322,20 @@ public class BasicWeaponBehaviour : MonoBehaviour
         Instantiate(_bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
     }
 
-    private void MuzzleFlash()
-    {
-
-    }
-
     void PointGunToCenter()
     {
         RaycastHit target;
         Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.green, Time.deltaTime);
-        if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out target, 100f) && target.distance > 5f)
+        if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out target, 100f, ignoreRaycast) && target.distance > 5f)
         {
             transform.LookAt(target.point);
+            //Debug.Log(target.ToString());
         }
         else
         {
             transform.LookAt(_notarget);
             // Vector3.Scale(_fpscam.transform.position, new Vector3(1f, 1f, 100f))
         }
-    }
-
-    void AnimateCameraFOV()
-    {
-        StopCoroutine("CameraFOVEffect");
-        StartCoroutine("CameraFOVEffect");
-    }
-
-    IEnumerator CameraFOVEffect()
-    {
-        _fpscam.fieldOfView = 60;
-        for (int i = 0; i < 2; i++)
-        {
-            _fpscam.fieldOfView = _fpscam.fieldOfView - 1;
-            yield return new WaitForSeconds(0.0005f);
-        }
-        for (int g = 0; g < 2; g++)
-        {
-            _fpscam.fieldOfView = _fpscam.fieldOfView + 1;
-            yield return new WaitForSeconds(0.0005f);
-        }
-    }
-
-    void AnimateCrosshair()
-    {
-        StopCoroutine("AnimateCrosshairCoroutine");
-        StartCoroutine("AnimateCrosshairCoroutine");
-    }
-
-    IEnumerator AnimateCrosshairCoroutine()
-    {
-        // Reset to original position.
-        _topCrosshair.rectTransform.position = topPos;
-        _botCrosshair.rectTransform.position = botPos;
-        _leftCrosshair.rectTransform.position = leftPos;
-        _rightCrosshair.rectTransform.position = rightPos;
-
-        _topCrosshair.rectTransform.position = new Vector2(_topCrosshair.rectTransform.position.x, _topCrosshair.rectTransform.position.y + crosshairSpreadAmount);
-        _botCrosshair.rectTransform.position = new Vector2(_botCrosshair.rectTransform.position.x, _botCrosshair.rectTransform.position.y - crosshairSpreadAmount);
-        _leftCrosshair.rectTransform.position = new Vector2(_leftCrosshair.rectTransform.position.x - crosshairSpreadAmount, _leftCrosshair.rectTransform.position.y);
-        _rightCrosshair.rectTransform.position = new Vector2(_rightCrosshair.rectTransform.position.x + crosshairSpreadAmount, _rightCrosshair.rectTransform.position.y);
-        yield return new WaitForSeconds(crosshairSpreadDuration);
-        _topCrosshair.rectTransform.position = new Vector2(_topCrosshair.rectTransform.position.x, _topCrosshair.rectTransform.position.y - crosshairSpreadAmount);
-        _botCrosshair.rectTransform.position = new Vector2(_botCrosshair.rectTransform.position.x, _botCrosshair.rectTransform.position.y + crosshairSpreadAmount);
-        _leftCrosshair.rectTransform.position = new Vector2(_leftCrosshair.rectTransform.position.x + crosshairSpreadAmount, _leftCrosshair.rectTransform.position.y);
-        _rightCrosshair.rectTransform.position = new Vector2(_rightCrosshair.rectTransform.position.x - crosshairSpreadAmount, _rightCrosshair.rectTransform.position.y);
-        yield return null;
     }
 
     void Recoil()

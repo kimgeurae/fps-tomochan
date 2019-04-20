@@ -35,7 +35,6 @@ public class PlayerBehaviour : MonoBehaviour
     }
     private State state;
 
-
     // Start is called before the first frame update
     void Start()
     {

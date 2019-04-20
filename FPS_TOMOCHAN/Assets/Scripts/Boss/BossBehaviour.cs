@@ -42,7 +42,7 @@ public class BossBehaviour : MonoBehaviour
     void Update()
     {
         Behaviour();
-        Debug.Log(state);
+        //Debug.Log(state);
     }
 
     private void OnEnable()
