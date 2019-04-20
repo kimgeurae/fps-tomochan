@@ -6,6 +6,7 @@ using TMPro;
 
 public class BasicWeaponBehaviour : MonoBehaviour
 {
+    #region References
     [SerializeField]
     Transform bulletSpawnPoint;
     [SerializeField]
@@ -14,6 +15,25 @@ public class BasicWeaponBehaviour : MonoBehaviour
     Text _weaponModeGUI;
     public Camera _fpscam;
     public Transform _notarget;
+    [SerializeField]
+    Text _ammoInfo;
+    [SerializeField]
+    Image _hudBullet01;
+    [SerializeField]
+    Image _hudBullet02;
+    [SerializeField]
+    Text _reloadWarning;
+    [SerializeField]
+    Image _reloadCircle;
+    Animator _anim;
+    public ParticleSystem muzzleFlashParticle;
+    public GameObject _impactMetal, _impactConcrete, _impactBlood;
+    [SerializeField]
+    GameObject _bulletPrefab;
+    LayerMask ignoreRaycast;
+    GameObject _player;
+    #endregion
+    #region Bullet damage & crit
     [SerializeField]
     int bulletMinDmg;
     [SerializeField]
@@ -24,11 +44,17 @@ public class BasicWeaponBehaviour : MonoBehaviour
     int bulletMaxCritDmg;
     [Range(0.0f, 1.0f)]
     public float critChance;
+    #endregion
+    #region Recoil
     [SerializeField]
     float verticalRecoil = 2f;
     [SerializeField]
     float horizontalRecoil = 1f;
+    #endregion
+    #region Offsets
     Vector3 offset = new Vector3(0f, 1f, 0f);
+    #endregion
+    #region Shooting (Auto & Semi)
     public enum WeaponMode
     {
         Semi,
@@ -40,7 +66,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
     float fireRate;
     float nextTimeToFire = 0f;
     bool semiCanShoot = true;
-
+    #endregion
+    #region Reload and Magazine
     [SerializeField]
     int maxAmmo = 90;
     [SerializeField]
@@ -50,32 +77,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
     bool isReloading = false;
     [SerializeField]
     float emptyReloadTime = 1f;
-    [SerializeField]
-    Text _ammoInfo;
-
-    [SerializeField]
-    Image _hudBullet01;
-    [SerializeField]
-    Image _hudBullet02;
-
-    [SerializeField]
-    Text _reloadWarning;
-
-    [SerializeField]
-    Image _reloadCircle;
-
-    Animator _anim;
-
-    public ParticleSystem muzzleFlashParticle;
-
-    public GameObject _impactMetal, _impactConcrete, _impactBlood;
-
-    [SerializeField]
-    GameObject _bulletPrefab;
-
-    LayerMask ignoreRaycast;
-
-    GameObject _player;
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -99,7 +101,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
             ReloadRequest();
         }
         PointGunToCenter();
-        UpdateGUI();
+        UpdateGUI(); 
         if (Input.GetButtonUp("Fire1"))
         {
             semiCanShoot = true;
@@ -143,6 +145,8 @@ public class BasicWeaponBehaviour : MonoBehaviour
         }
     }
 
+    #region Reload Request, called when pressin "R"
+    // Gives the reload time for calling the visual part of the reload in PlayerHUDBehaviour
     void ReloadRequest()
     {
         if (magazineAmmo < maxMagazineAmmo)
@@ -157,12 +161,15 @@ public class BasicWeaponBehaviour : MonoBehaviour
             {
                 time = emptyReloadTime + magazineAmmo / 10f;
             }
-            coroutine = Reload(time);
+            //coroutine = Reload(time);
             //StartCoroutine(coroutine);
             _player.GetComponent<PlayerHUDBehaviour>().ReloadCircleHUD(time);
         }
     }
+    #endregion
 
+    #region Reload Method Called by the PlayerHUDBehaviour
+    // Executes the non visual part of the reload.
     public void ReloadWeapon()
     {
         isReloading = true;
@@ -198,7 +205,9 @@ public class BasicWeaponBehaviour : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region Deprecated Reload Coroutine Method
     IEnumerator Reload(float t)
     {
         isReloading = true;
@@ -225,7 +234,10 @@ public class BasicWeaponBehaviour : MonoBehaviour
             isReloading = false;
         }
     }
+    #endregion
 
+    #region Shoot Function. Called in PlayerBehaviour
+    // Shoots depending on weapon mode (Semi, Auto, Burst).
     public void Shoot()
     {
         switch (weaponMode)
@@ -250,7 +262,9 @@ public class BasicWeaponBehaviour : MonoBehaviour
                 break;
         }
     }
+    #endregion
 
+    #region The shooting itself. Does everything from visual to raycasting and seeing if it hits a valid target.
     void SemiModeShoot()
     {
         muzzleFlashParticle.Play();
@@ -298,7 +312,10 @@ public class BasicWeaponBehaviour : MonoBehaviour
         _player.GetComponent<PlayerHUDBehaviour>().AnimateCrosshair();
         Recoil();
     }
+    #endregion
 
+    #region Spawn the Hit Impact
+    // Based on the time that would take for the bullet to hit the target
     private void CallHitImpact(RaycastHit hit)
     {
         IEnumerator coroutine = HitImpact(hit);
@@ -315,13 +332,18 @@ public class BasicWeaponBehaviour : MonoBehaviour
         else if (hit.transform.gameObject.CompareTag("Wall"))
             Instantiate(_impactConcrete, hit.point, Quaternion.LookRotation(hit.normal));
     }
+    #endregion
 
+    #region Spawn Bullet
+    // Intantiate a bullet at the edge of the gun barrel. Atm it's using instantiate, but would be better to use a pool.
     private void SpawnBullet()
     {
-        //_bullet = _bulletPrefab;
         Instantiate(_bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
     }
+    #endregion
 
+    #region Point Gun Barrel to the center of the Aim based on distance
+    // Do a raycast that get the hit.point for the gun to look at.
     void PointGunToCenter()
     {
         RaycastHit target;
@@ -329,15 +351,16 @@ public class BasicWeaponBehaviour : MonoBehaviour
         if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out target, 100f, ignoreRaycast) && target.distance > 5f)
         {
             transform.LookAt(target.point);
-            //Debug.Log(target.ToString());
         }
         else
         {
             transform.LookAt(_notarget);
-            // Vector3.Scale(_fpscam.transform.position, new Vector3(1f, 1f, 100f))
         }
     }
+    #endregion
 
+    #region Apply Recoil Method
+    // Acess the FPSCameraBehaviour and apply recoil based on given values and weapon shooting mode.
     void Recoil()
     {
         if (weaponMode == WeaponMode.Auto || weaponMode == WeaponMode.Burst)
@@ -351,5 +374,5 @@ public class BasicWeaponBehaviour : MonoBehaviour
             _fpscam.GetComponent<FPSCameraBehavior>().ApplyRecoil(verticalRecoil, verticalRecoil / 25, leftOrRight);
         }
     }
-
+    #endregion
 }
