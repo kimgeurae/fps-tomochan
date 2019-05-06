@@ -34,10 +34,13 @@ public class BossBehaviour : MonoBehaviour
 
     public int health;
 
+    public ParticleSystem _dmgEffect;
+
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        _dmgEffect = transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -124,6 +127,7 @@ public class BossBehaviour : MonoBehaviour
         }
         else
         {
+            _dmgEffect.Play();
             state = State.Recharging;
         }
     }
@@ -132,12 +136,17 @@ public class BossBehaviour : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            _dmgEffect.Play();
             if (state == State.Awakened)
                 state = State.Recharging;
         }
         if (collision.gameObject.CompareTag("Wall"))
         {
             state = State.Recharging;
+        }
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Dmg the player.
         }
     }
 
