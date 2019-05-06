@@ -36,11 +36,16 @@ public class BossBehaviour : MonoBehaviour
 
     public ParticleSystem _dmgEffect;
 
+    public GameObject[] _targets;
+
+    public GameObject _dissolve;
+
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _dmgEffect = transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
+        _dissolve = transform.GetChild(1).gameObject;
     }
 
     // Update is called once per frame

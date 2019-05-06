@@ -34,6 +34,8 @@ public class PlayerBehaviour : MonoBehaviour
         Hook,
     }
     private State state;
+    public int maxHealth;
+    private int health;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +49,7 @@ public class PlayerBehaviour : MonoBehaviour
         _meshFilter = GetComponent<MeshFilter>();
         _defaultMesh = GetComponent<MeshFilter>().mesh;
         state = State.Stand;
+        health = maxHealth;
     }
 
     // Update is called once per frame
@@ -192,4 +195,28 @@ public class PlayerBehaviour : MonoBehaviour
         _gun.gameObject.GetComponent<BasicWeaponBehaviour>().Shoot();
     }
 
+    public void AddHealth(int amount)
+    {
+        if (health + amount < 100)
+        {
+            health += amount;
+        }
+        else
+        {
+            health = 100;
+        }
+    }
+
+    public void RemoveHealth(int amount)
+    {
+        if (health - amount > 0)
+        {
+            health -= amount;
+            Debug.Log(health);
+        }
+        else
+        {
+            health = 0;
+        }
+    }
 }

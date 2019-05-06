@@ -78,6 +78,9 @@ public class BasicWeaponBehaviour : MonoBehaviour
     [SerializeField]
     float emptyReloadTime = 1f;
     #endregion
+    #region BossRestrictions
+    public GameObject[] _targets;
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -296,23 +299,30 @@ public class BasicWeaponBehaviour : MonoBehaviour
             }
             if (hit.transform.gameObject.CompareTag("Boss"))
             {
-                bool isCrit = Random.value < critChance;
-                if (isCrit)
+                if (_targets[0].transform.GetChild(0).GetComponent<TargetScript>().state == TargetScript.State.down && _targets[1].transform.GetChild(0).GetComponent<TargetScript>().state == TargetScript.State.down && _targets[2].transform.GetChild(0).GetComponent<TargetScript>().state == TargetScript.State.down)
                 {
-                    int cdmg = Random.Range(bulletMinCritDmg, bulletMaxCritDmg);
-                    hit.transform.gameObject.GetComponent<BossBehaviour>().ApplyDamage(cdmg);
-                    Debug.Log("Enemy has been hitted with a Critical Hit!!! And Received a damage of: " + cdmg);
-                    DamagePopup.Create(hit.transform.position + offset, cdmg, true);
+                    bool isCrit = Random.value < critChance;
+                    if (isCrit)
+                    {
+                        int cdmg = Random.Range(bulletMinCritDmg, bulletMaxCritDmg);
+                        hit.transform.gameObject.GetComponent<BossBehaviour>().ApplyDamage(cdmg);
+                        Debug.Log("Enemy has been hitted with a Critical Hit!!! And Received a damage of: " + cdmg);
+                        DamagePopup.Create(hit.transform.position + offset, cdmg, true);
+                    }
+                    else
+                    {
+                        int ndmg = Random.Range(bulletMinDmg, bulletMaxDmg);
+                        hit.transform.gameObject.GetComponent<BossBehaviour>().ApplyDamage(ndmg);
+                        Debug.Log("Enemy has been hitted with a Normal Hit! And Received the damage of: " + ndmg);
+                        DamagePopup.Create(hit.transform.position + offset, ndmg, false);
+                    }
+                    _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
+                    CallHitImpact(hit);
                 }
                 else
                 {
-                    int ndmg = Random.Range(bulletMinDmg, bulletMaxDmg);
-                    hit.transform.gameObject.GetComponent<BossBehaviour>().ApplyDamage(ndmg);
-                    Debug.Log("Enemy has been hitted with a Normal Hit! And Received the damage of: " + ndmg);
-                    DamagePopup.Create(hit.transform.position + offset, ndmg, false);
+                    DamagePopup.Create(hit.transform.position + offset, 0, true);
                 }
-                _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
-                CallHitImpact(hit);
             }
             if (hit.transform.gameObject.CompareTag("Wall"))
             {
@@ -395,4 +405,12 @@ public class BasicWeaponBehaviour : MonoBehaviour
         }
     }
     #endregion
+
+    #region Add Ammo
+    public void AddAmmo(int amount)
+    {
+        actualAmmo += amount;
+    }
+    #endregion
+
 }

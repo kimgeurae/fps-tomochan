@@ -15,10 +15,15 @@ public class TargetScript : MonoBehaviour
     public bool canGoDown = false;
     [SerializeField]
     float getBlendValue;
+    [HideInInspector]
+    public enum State { up, down, };
+    [HideInInspector]
+    public State state;
 
     // Start is called before the first frame update
     void Start()
     {
+        state = State.up;
         _anim = GetComponent<Animator>();
     }
 
@@ -65,6 +70,16 @@ public class TargetScript : MonoBehaviour
             _anim.SetFloat("Blend", Mathf.Clamp(_anim.GetFloat("Blend") + blendValue, 0f, 1f));
             yield return new WaitForSeconds(blendWaitTime);
         }
+    }
+
+    public void SetStateDown()
+    {
+        state = State.down;
+    }
+
+    public void SetStateUp()
+    {
+        state = State.up;
     }
 
 }
