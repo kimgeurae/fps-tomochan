@@ -294,6 +294,26 @@ public class BasicWeaponBehaviour : MonoBehaviour
                 _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
                 CallHitImpact(hit);
             }
+            if (hit.transform.gameObject.CompareTag("Boss"))
+            {
+                bool isCrit = Random.value < critChance;
+                if (isCrit)
+                {
+                    int cdmg = Random.Range(bulletMinCritDmg, bulletMaxCritDmg);
+                    hit.transform.gameObject.GetComponent<BossBehaviour>().ApplyDamage(cdmg);
+                    Debug.Log("Enemy has been hitted with a Critical Hit!!! And Received a damage of: " + cdmg);
+                    DamagePopup.Create(hit.transform.position + offset, cdmg, true);
+                }
+                else
+                {
+                    int ndmg = Random.Range(bulletMinDmg, bulletMaxDmg);
+                    hit.transform.gameObject.GetComponent<BossBehaviour>().ApplyDamage(ndmg);
+                    Debug.Log("Enemy has been hitted with a Normal Hit! And Received the damage of: " + ndmg);
+                    DamagePopup.Create(hit.transform.position + offset, ndmg, false);
+                }
+                _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);
+                CallHitImpact(hit);
+            }
             if (hit.transform.gameObject.CompareTag("Wall"))
             {
                 _bullet.gameObject.GetComponent<BulletBehaviour>().BulletHole(hit);

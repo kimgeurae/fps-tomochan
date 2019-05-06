@@ -32,6 +32,8 @@ public class BossBehaviour : MonoBehaviour
     float prepareAttack = 3f;
     float prepareValue = 0f;
 
+    public int health;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -136,6 +138,15 @@ public class BossBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall"))
         {
             state = State.Recharging;
+        }
+    }
+
+    public void ApplyDamage(int dmg)
+    {
+        health -= dmg;
+        if (health <= 0)
+        {
+            Destroy(this.gameObject);
         }
     }
 }
