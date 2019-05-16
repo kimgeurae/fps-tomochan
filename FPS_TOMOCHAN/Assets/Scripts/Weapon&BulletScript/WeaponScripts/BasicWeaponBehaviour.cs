@@ -81,6 +81,11 @@ public class BasicWeaponBehaviour : MonoBehaviour
     #region BossRestrictions
     public GameObject[] _targets;
     #endregion
+    #region Sounds
+    public GameObject _gunShoot;
+    public AudioSource _magazineOut;
+    public AudioSource _magazineIn;
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -166,6 +171,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
             }
             //coroutine = Reload(time);
             //StartCoroutine(coroutine);
+            _magazineOut.Play();
             _player.GetComponent<PlayerHUDBehaviour>().ReloadCircleHUD(time);
         }
     }
@@ -175,6 +181,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
     // Executes the non visual part of the reload.
     public void ReloadWeapon()
     {
+        _magazineIn.Play();
         isReloading = true;
         if (actualAmmo >= maxMagazineAmmo)
         {
@@ -270,6 +277,7 @@ public class BasicWeaponBehaviour : MonoBehaviour
     #region The shooting itself. Does everything from visual to raycasting and seeing if it hits a valid target.
     void SemiModeShoot()
     {
+        Instantiate(_gunShoot, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
         muzzleFlashParticle.Play();
         RaycastHit hit;
         Debug.DrawLine(_fpscam.transform.position, _fpscam.transform.forward * 100f, Color.yellow, 2.5f);
