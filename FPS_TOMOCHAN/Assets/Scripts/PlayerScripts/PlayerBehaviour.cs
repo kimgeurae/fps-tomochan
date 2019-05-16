@@ -25,6 +25,9 @@ public class PlayerBehaviour : MonoBehaviour
     private MeshFilter _meshFilter;
     private Mesh _defaultMesh;
     public Mesh _circleMesh;
+    private float dashTime;
+    public SimpleHealthBar staminaBar;
+    public SimpleHealthBar healthBar;
     private enum State
     {
         Stand,
@@ -62,6 +65,7 @@ public class PlayerBehaviour : MonoBehaviour
         ApplyDrag();
         PlayerShoot();
         Crouch();
+        UpdateStaminaBar();
     }
 
     private void Movement()
@@ -166,9 +170,17 @@ public class PlayerBehaviour : MonoBehaviour
         _velocity.z /= 1 + drag.z * Time.deltaTime;
     }
 
+    private void UpdateStaminaBar()
+    {
+        staminaBar.UpdateBar(dashTime, 2);
+        if (dashTime < 100)
+            dashTime += Time.deltaTime;
+    }
+
     IEnumerator DashTimer()
     {
         _canDash = false;
+        dashTime = 0;
         yield return new WaitForSeconds(dragDuration);
         _canDash = true;
         yield break;
@@ -205,6 +217,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             health = 100;
         }
+        healthBar.UpdateBar(health, 100);
     }
 
     public void RemoveHealth(int amount)
@@ -218,5 +231,6 @@ public class PlayerBehaviour : MonoBehaviour
         {
             health = 0;
         }
+        healthBar.UpdateBar(health, 100);
     }
 }
