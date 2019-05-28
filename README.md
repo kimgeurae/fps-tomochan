@@ -10,9 +10,17 @@ Requirements:
 Extras: 
 
 * Armor system. ()
-* HUD system. ()
-* Multiple fire weapons. ()
-* Dash. ()
+* HUD system. (OK)
+* Multiple firing mode weapon. (OK)
+* Dash. (OK)
 * Melee weapons. ()
 * Launchable weapons. ()
-* Grappling hook. ()
+* Grappling hook. (OK) Needs visual and parameter refinement.
+
+Next Tasks:
+
+* Refine and apply scriptable object principle to the weapon. ()
+* Add the remaining extra tasks. ()
+* Refine IA Systems by adding nav mesh. ()
+* Add more behaviours to the boss. ()
+* Fix the sound system. ()
