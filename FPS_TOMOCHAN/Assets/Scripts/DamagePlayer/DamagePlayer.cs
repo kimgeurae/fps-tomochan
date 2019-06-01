@@ -7,6 +7,7 @@ public class DamagePlayer : MonoBehaviour
 
     private float damageCooldown;
     private float damageTimer;
+    public int dmg;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,7 @@ public class DamagePlayer : MonoBehaviour
         {
             if (damageTimer > damageCooldown)
             {
-                other.gameObject.GetComponent<PlayerBehaviour>().RemoveHealth(40);
+                other.gameObject.GetComponent<PlayerBehaviour>().RemoveHealth(dmg);
                 damageTimer = 0;
             }
         }

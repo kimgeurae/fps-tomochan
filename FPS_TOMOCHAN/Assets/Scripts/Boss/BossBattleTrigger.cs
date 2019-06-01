@@ -7,6 +7,10 @@ public class BossBattleTrigger : MonoBehaviour
 
     [SerializeField]
     GameObject _boss;
+    public GameObject _fireWall;
+
+    public AudioSource _bossMusic;
+    public AudioSource _generalMusic;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +29,10 @@ public class BossBattleTrigger : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             _boss.SetActive(true);
+            _fireWall.SetActive(true);
             //this.gameObject.SetActive(false);
+            _bossMusic.Play();
+            _generalMusic.Stop();
         }
     }
 

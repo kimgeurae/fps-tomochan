@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -39,6 +40,10 @@ public class PlayerBehaviour : MonoBehaviour
     private State state;
     public int maxHealth;
     private int health;
+    bool doOnce = true;
+
+    [SerializeField]
+    GameObject _defeat;
 
     // Start is called before the first frame update
     void Start()
@@ -58,14 +63,37 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
-        Gravity();
-        Jump();
-        Dash();
-        ApplyDrag();
-        PlayerShoot();
-        Crouch();
-        UpdateStaminaBar();
+        if (health > 0)
+        {
+            Movement();
+            Gravity();
+            Jump();
+            Dash();
+            ApplyDrag();
+            PlayerShoot();
+            Crouch();
+            UpdateStaminaBar();
+        }
+        ResetLevel();
+    }
+
+    private void ResetLevel()
+    {
+        if (health <= 0)
+        {
+            if (doOnce)
+            {
+                _defeat.SetActive(true);
+                StartCoroutine("ReloadSceneMethod");
+                doOnce = false;
+            }
+        }
+    }
+
+    IEnumerator ReloadSceneMethod()
+    {
+        yield return new WaitForSeconds(3);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void Movement()

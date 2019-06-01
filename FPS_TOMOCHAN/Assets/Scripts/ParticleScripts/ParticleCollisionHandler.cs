@@ -9,6 +9,7 @@ public class ParticleCollisionHandler : MonoBehaviour
     public List<ParticleCollisionEvent> collisionEvents;
     private float applyDamageCooldown = 2f;
     private float applyDamageCount = 4f;
+    public BossBehaviour _bossBehaviour;
 
 
     // Start is called before the first frame update
@@ -29,7 +30,7 @@ public class ParticleCollisionHandler : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             if (applyDamageCount > applyDamageCooldown) {
-                other.gameObject.GetComponent<PlayerBehaviour>().RemoveHealth(10);
+                other.gameObject.GetComponent<PlayerBehaviour>().RemoveHealth(_bossBehaviour.bossDmg);
                 applyDamageCount = 0;
             }
         }

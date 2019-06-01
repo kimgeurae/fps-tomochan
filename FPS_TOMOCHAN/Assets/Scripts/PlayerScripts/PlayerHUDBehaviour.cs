@@ -36,6 +36,7 @@ public class PlayerHUDBehaviour : MonoBehaviour
 
     private void Start()
     {
+        Cursor.visible = false;
 
         #region Load Main References
         //Debug.Log(_gunSlot.transform.childCount.ToString());

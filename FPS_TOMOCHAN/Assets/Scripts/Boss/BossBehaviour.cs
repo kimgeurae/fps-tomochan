@@ -32,20 +32,29 @@ public class BossBehaviour : MonoBehaviour
     float prepareAttack = 3f;
     float prepareValue = 0f;
 
-    public int health;
+    private int health;
+
+    public int maxBossHealth;
+
+    public int bossDmg;
 
     public ParticleSystem _dmgEffect;
 
     public GameObject[] _targets;
 
-    public GameObject _dissolve;
+    public GameObject _bossName;
+
+    public SimpleHealthBar bossBar;
+
+    public GameObject _vitory;
 
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _dmgEffect = transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
-        _dissolve = transform.GetChild(1).gameObject;
+        health = maxBossHealth;
+        bossBar.UpdateBar(health, maxBossHealth);
     }
 
     // Update is called once per frame
@@ -53,11 +62,21 @@ public class BossBehaviour : MonoBehaviour
     {
         Behaviour();
         //Debug.Log(state);
+        if (health <= 0)
+        {
+            bossBar.UpdateBar(0, maxBossHealth);
+            _bossName.SetActive(false);
+            bossBar.transform.parent.gameObject.SetActive(false);
+            _vitory.SetActive(true);
+            Destroy(this.gameObject);
+        }
     }
 
     private void OnEnable()
     {
         state = State.Awakened;
+        _bossName.SetActive(true);
+        bossBar.transform.parent.gameObject.SetActive(true);
     }
 
     void Behaviour()
@@ -114,7 +133,9 @@ public class BossBehaviour : MonoBehaviour
     void GetTarget()
     {
         point[0] = transform.position;
-        point[2] = _player.transform.position;
+        // (xM = (xA + xB) / 2, yM = (yA + yB) / 2)
+        point[2] = new Vector3((point[0].x + _player.transform.position.x)/2, _player.transform.position.y, (point[0].z + _player.transform.position.z)/2); // Use _player.transform.position; for jumping into the player. This line makes it jumps 1/2 of the distance.
+        //point[2] = new Vector3((point[0].x + point[2].x) / 2, _player.transform.position.y, (point[0].z + point[2].z) / 2); // This line is for making it jumps only 1/4 of the distance.
         point[2] = new Vector3(Mathf.Clamp(point[2].x, -12.5f, 12.5f), Mathf.Clamp(point[2].y, 1.483867f, 1.483868f), Mathf.Clamp(point[2].z, -43.2f, -18.2f));
         point[1] = point[0] + (point[2] - point[0]) / 2 + Vector3.up * 15f;
         count = 0;
@@ -158,9 +179,6 @@ public class BossBehaviour : MonoBehaviour
     public void ApplyDamage(int dmg)
     {
         health -= dmg;
-        if (health <= 0)
-        {
-            Destroy(this.gameObject);
-        }
+        bossBar.UpdateBar(health, maxBossHealth);
     }
 }
