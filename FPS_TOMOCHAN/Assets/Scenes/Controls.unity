@@ -295,7 +295,7 @@ PrefabInstance:
     - target: {fileID: 6053790224695090192, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 6053790224695090192, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
@@ -347,7 +347,11 @@ PrefabInstance:
 
         B para trocar o modo de tiro.
 
-        C para agachar.'
+        R para recarregar.
+
+        C para agachar.
+
+        Left SHIFT para usar a esquiva.'
       objectReference: {fileID: 0}
     - target: {fileID: 6053790224695090199, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
@@ -362,7 +366,7 @@ PrefabInstance:
     - target: {fileID: 6053790224695090199, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 82
+      value: 133
       objectReference: {fileID: 0}
     - target: {fileID: 6053790224695090199, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
@@ -372,17 +376,17 @@ PrefabInstance:
     - target: {fileID: 6053790224695090199, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6053790224695090199, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 15
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 6053790224695090199, guid: 0717f219a77faa54fa65c2ec34e9a102,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 15
+      value: 24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0717f219a77faa54fa65c2ec34e9a102, type: 3}
