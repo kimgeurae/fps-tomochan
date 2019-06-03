@@ -32,11 +32,7 @@ public class BossBehaviour : MonoBehaviour
     float prepareAttack = 3f;
     float prepareValue = 0f;
 
-    private int health;
-
     public int maxBossHealth;
-
-    public int bossDmg;
 
     public ParticleSystem _dmgEffect;
 
@@ -44,17 +40,18 @@ public class BossBehaviour : MonoBehaviour
 
     public GameObject _bossName;
 
-    public SimpleHealthBar bossBar;
-
     public GameObject _vitory;
+
+    public HealthBarShrink bossHpBar;
+
+    public int bossDmg;
 
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _dmgEffect = transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
-        health = maxBossHealth;
-        bossBar.UpdateBar(health, maxBossHealth);
+        bossHpBar = GameObject.FindGameObjectWithTag("BossHealthBar").GetComponent<HealthBarShrink>();
     }
 
     // Update is called once per frame
@@ -62,11 +59,9 @@ public class BossBehaviour : MonoBehaviour
     {
         Behaviour();
         //Debug.Log(state);
-        if (health <= 0)
+        if (bossHpBar.healthSystem.GetHealthNormalized() <= 0)
         {
-            bossBar.UpdateBar(0, maxBossHealth);
             _bossName.SetActive(false);
-            bossBar.transform.parent.gameObject.SetActive(false);
             _vitory.SetActive(true);
             Destroy(this.gameObject);
         }
@@ -76,7 +71,7 @@ public class BossBehaviour : MonoBehaviour
     {
         state = State.Awakened;
         _bossName.SetActive(true);
-        bossBar.transform.parent.gameObject.SetActive(true);
+        bossHpBar.gameObject.SetActive(true);
     }
 
     void Behaviour()
@@ -176,9 +171,8 @@ public class BossBehaviour : MonoBehaviour
         }
     }
 
-    public void ApplyDamage(int dmg)
+    public void ApplyDamage(int amount)
     {
-        health -= dmg;
-        bossBar.UpdateBar(health, maxBossHealth);
+        bossHpBar.healthSystem.Damage(amount);
     }
 }

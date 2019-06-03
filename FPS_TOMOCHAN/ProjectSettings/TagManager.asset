@@ -19,6 +19,8 @@ TagManager:
   - EventTriggers
   - GunSlot
   - Boss
+  - HealthBar
+  - BossHealthBar
   layers:
   - Default
   - TransparentFX

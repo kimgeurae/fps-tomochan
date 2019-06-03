@@ -27,8 +27,6 @@ public class PlayerBehaviour : MonoBehaviour
     private Mesh _defaultMesh;
     public Mesh _circleMesh;
     private float dashTime;
-    public SimpleHealthBar staminaBar;
-    public SimpleHealthBar healthBar;
     private enum State
     {
         Stand,
@@ -38,8 +36,7 @@ public class PlayerBehaviour : MonoBehaviour
         Hook,
     }
     private State state;
-    public int maxHealth;
-    private int health;
+    private HealthBarShrink healthBar;
     bool doOnce = true;
 
     [SerializeField]
@@ -57,13 +54,13 @@ public class PlayerBehaviour : MonoBehaviour
         _meshFilter = GetComponent<MeshFilter>();
         _defaultMesh = GetComponent<MeshFilter>().mesh;
         state = State.Stand;
-        health = maxHealth;
+        healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<HealthBarShrink>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (health > 0)
+        if (healthBar.healthSystem.GetHealthNormalized() > 0)
         {
             Movement();
             Gravity();
@@ -72,21 +69,19 @@ public class PlayerBehaviour : MonoBehaviour
             ApplyDrag();
             PlayerShoot();
             Crouch();
-            UpdateStaminaBar();
+            //UpdateStaminaBar();
         }
-        ResetLevel();
+        else
+            ResetLevel();
     }
 
     private void ResetLevel()
     {
-        if (health <= 0)
+        if (doOnce)
         {
-            if (doOnce)
-            {
-                _defeat.SetActive(true);
-                StartCoroutine("ReloadSceneMethod");
-                doOnce = false;
-            }
+            _defeat.SetActive(true);
+            StartCoroutine("ReloadSceneMethod");
+            doOnce = false;
         }
     }
 
@@ -198,12 +193,14 @@ public class PlayerBehaviour : MonoBehaviour
         _velocity.z /= 1 + drag.z * Time.deltaTime;
     }
 
+    /*
     private void UpdateStaminaBar()
     {
         staminaBar.UpdateBar(dashTime, 2);
         if (dashTime < 100)
             dashTime += Time.deltaTime;
     }
+    */
 
     IEnumerator DashTimer()
     {
@@ -237,6 +234,17 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void AddHealth(int amount)
     {
+        healthBar.healthSystem.Heal(amount);
+    }
+
+    public void RemoveHealth(int amount)
+    {
+        healthBar.healthSystem.Damage(amount);
+    }
+
+    /*
+    public void AddHealth(int amount)
+    {
         if (health + amount < 100)
         {
             health += amount;
@@ -247,7 +255,9 @@ public class PlayerBehaviour : MonoBehaviour
         }
         healthBar.UpdateBar(health, 100);
     }
+    */
 
+    /*
     public void RemoveHealth(int amount)
     {
         if (health - amount > 0)
@@ -261,4 +271,5 @@ public class PlayerBehaviour : MonoBehaviour
         }
         healthBar.UpdateBar(health, 100);
     }
+    */
 }
